@@ -1,3 +1,4 @@
+use std::fmt::{Display, Formatter};
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
 /// A simple three dimensional vector
@@ -61,6 +62,12 @@ impl Vec3 {
             y: u.z * v.x - u.x * v.z,
             z: u.x * v.y - u.y * v.x,
         }
+    }
+}
+
+impl Display for Vec3 {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{} {} {}", self.x, self.y, self.z)
     }
 }
 
@@ -172,6 +179,12 @@ mod test {
         let expected = Vec3::new(-45.0, 40.0, -5.0);
         let actual = Vec3::cross(&Vec3::new(2.0, 3.0, 6.0), &Vec3::new(7.0, 8.0, 1.0));
         assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn display_format_works() {
+        let expected = format!("{}", Vec3::new(1.0, 2.5, 3.0));
+        assert_eq!(expected, "1 2.5 3");
     }
 
     #[test]
