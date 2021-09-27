@@ -1,16 +1,14 @@
-#![allow(dead_code)]
-
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
 /// A simple three dimensional vector
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Vec3 {
     x: f64,
     y: f64,
     z: f64,
 }
 
-pub type Point3 = Vec3;
+// pub type Point3 = Vec3;
 
 impl Vec3 {
     /// Constructs a new vector with given x, y and z values
@@ -63,12 +61,6 @@ impl Vec3 {
             y: u.z * v.x - u.x * v.z,
             z: u.x * v.y - u.y * v.x,
         }
-    }
-}
-
-impl PartialEq for Vec3 {
-    fn eq(&self, other: &Self) -> bool {
-        self.x == other.x && self.y == other.y && self.z == other.z
     }
 }
 
@@ -167,11 +159,19 @@ mod test {
         assert_eq!(6.0, Vec3::new(4.0, 4.0, 2.0).length());
     }
 
+    #[test]
     fn dot_product_works() {
         assert_eq!(
-            11.0,
+            14.0,
             Vec3::dot(&Vec3::new(1.0, 2.0, 3.0), &Vec3::new(1.0, 2.0, 3.0))
         );
+    }
+
+    #[test]
+    fn cross_product_works() {
+        let expected = Vec3::new(-45.0, 40.0, -5.0);
+        let actual = Vec3::cross(&Vec3::new(2.0, 3.0, 6.0), &Vec3::new(7.0, 8.0, 1.0));
+        assert_eq!(expected, actual);
     }
 
     #[test]
