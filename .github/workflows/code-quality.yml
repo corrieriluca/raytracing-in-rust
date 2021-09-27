@@ -13,4 +13,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Checking formatting
-        run: cargo fmt --all
+        run: cargo fmt --all -- --check
