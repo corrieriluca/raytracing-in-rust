@@ -1,0 +1,16 @@
+name: Code Quality
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  rustfmt:
+    name: Formatting
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Checking formatting
+        run: cargo fmt --all
