@@ -1,5 +1,9 @@
 #![allow(dead_code)]
+
+use std::ops::Neg;
+
 /// A simple three dimensional vector
+#[derive(Debug)]
 pub struct Vec3 {
     x: f64,
     y: f64,
@@ -58,4 +62,36 @@ impl Vec3 {
     }
 }
 
-// TODO: operator overloadings and unit vector
+impl PartialEq for Vec3 {
+    fn eq(&self, other: &Self) -> bool {
+        self.x == other.x && self.y == other.y && self.z == other.z
+    }
+}
+
+impl Neg for Vec3 {
+    type Output = Vec3;
+
+    fn neg(self) -> Self::Output {
+        Vec3::new(-self.x, -self.y, -self.z)
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn eq_works() {
+        assert_eq!(Vec3::new(0.0, 1.0, 3.0), Vec3::new(0.0, 1.0, 3.0));
+    }
+
+    #[test]
+    fn neq_works() {
+        assert_ne!(Vec3::new(1.0, 2.0, 3.0), Vec3::new(0.0, 0.0, 0.0));
+    }
+
+    #[test]
+    fn negation_works() {
+        assert_eq!(Vec3::new(-1.0, 2.0, -3.0), -Vec3::new(1.0, -2.0, 3.0));
+    }
+}
