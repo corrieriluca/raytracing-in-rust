@@ -9,7 +9,8 @@ pub struct Vec3 {
     z: f64,
 }
 
-// pub type Point3 = Vec3;
+/// Alias of Vec3 representing a 3D-point
+pub type Point3 = Vec3;
 
 impl Vec3 {
     /// Constructs a new vector with given x, y and z values

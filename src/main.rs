@@ -2,6 +2,7 @@ use crate::color::Color;
 use std::io::stdout;
 
 mod color;
+mod ray;
 mod vec3;
 
 fn main() {
