@@ -34,10 +34,6 @@ impl Hittable for Sphere {
         let intersection = r.at(t);
         let normal = (intersection - self.center) / self.radius;
 
-        Some(HitRecord {
-            intersection,
-            normal,
-            t,
-        })
+        Some(HitRecord::new(r, normal, t))
     }
 }
