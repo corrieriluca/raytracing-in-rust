@@ -12,8 +12,8 @@ pub struct HitRecord {
 }
 
 impl HitRecord {
-    pub fn new(hitting_ray: &Ray, outward_normal: Vec3, t: f64) -> HitRecord {
-        let front_face = Vec3::dot(&hitting_ray.direction(), &outward_normal) < 0.0;
+    pub fn new(r: &Ray, outward_normal: Vec3, t: f64) -> HitRecord {
+        let front_face = Vec3::dot(&r.direction(), &outward_normal) < 0.0;
         let normal = if front_face {
             outward_normal
         } else {
@@ -21,7 +21,7 @@ impl HitRecord {
         };
 
         HitRecord {
-            intersection: hitting_ray.at(t),
+            intersection: r.at(t),
             normal,
             t,
             front_face,

@@ -2,7 +2,7 @@ use crate::hittable::{HitRecord, Hittable};
 use crate::ray::Ray;
 use std::rc::Rc;
 
-struct HittableList {
+pub struct HittableList {
     objects: Vec<Rc<dyn Hittable>>,
 }
 
@@ -29,7 +29,7 @@ impl Hittable for HittableList {
         let mut record = None;
         let mut closest_so_far = t_max;
 
-        for object in self.objects {
+        for object in &self.objects {
             if let Some(hit_record) = object.hit(r, t_min, closest_so_far) {
                 closest_so_far = hit_record.t;
                 record = Some(hit_record);

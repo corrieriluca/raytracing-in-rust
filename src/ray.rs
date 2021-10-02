@@ -1,4 +1,3 @@
-#![allow(dead_code)]
 use crate::vec3::{Point3, Vec3};
 
 pub struct Ray {

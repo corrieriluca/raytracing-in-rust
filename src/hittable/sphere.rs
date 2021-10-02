@@ -7,6 +7,12 @@ pub struct Sphere {
     pub radius: f64,
 }
 
+impl Sphere {
+    pub fn new(center: Point3, radius: f64) -> Sphere {
+        Sphere { center, radius }
+    }
+}
+
 impl Hittable for Sphere {
     /// Tries to hit a sphere object.
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {

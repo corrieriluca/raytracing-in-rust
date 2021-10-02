@@ -1,18 +1,20 @@
 use crate::color::Color;
+use crate::hittable::hittable_list::HittableList;
+use crate::hittable::sphere::Sphere;
+use crate::hittable::Hittable;
 use crate::ray::Ray;
 use crate::vec3::{Point3, Vec3};
 use std::io::stdout;
+use std::rc::Rc;
 
 mod color;
 mod hittable;
 mod ray;
 mod vec3;
 
-fn ray_color(r: Ray) -> Color {
-    let t = hit_sphere(Point3::new(0.0, 0.0, -1.0), 0.5, &r);
-    if t > 0.0 {
-        let n = (r.at(t) - Vec3::new(0.0, 0.0, -1.0)).normalized();
-        return 0.5 * Color::new(n.x() + 1.0, n.y() + 1.0, n.z() + 1.0);
+fn ray_color(r: Ray, world: &impl Hittable) -> Color {
+    if let Some(hit_record) = world.hit(&r, 0.0, f64::INFINITY) {
+        return 0.5 * (hit_record.normal + Color::new(1.0, 1.0, 1.0));
     }
     let unit_direction = r.direction().normalized();
     let t = 0.5 * (unit_direction.y() + 1.0);
@@ -25,6 +27,12 @@ fn main() {
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 400;
     let image_height = (image_width as f64 / aspect_ratio) as i32;
+
+    // World
+
+    let mut world = HittableList::new();
+    world.add(Rc::new(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5)));
+    world.add(Rc::new(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0)));
 
     // Camera
 
@@ -47,16 +55,15 @@ fn main() {
         for i in 0..image_width {
             let u = i as f64 / (image_width - 1) as f64;
             let v = j as f64 / (image_height - 1) as f64;
-            let r = Ray::new(
-                origin,
-                lower_left_corner + u * horizontal + v * vertical - origin,
-            );
-            let pixel_color = ray_color(r);
+            let r = Ray::new(origin, lower_left_corner + u * horizontal + v * vertical);
+            let pixel_color = ray_color(r, &world);
             pixel_color
                 .write(&mut stdout())
                 .expect("An error occurred while writing to standard output");
         }
     }
+
+    world.clear();
 
     eprintln!("\nDone!");
 }
