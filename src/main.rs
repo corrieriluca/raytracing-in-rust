@@ -7,6 +7,7 @@ use crate::vec3::{Point3, Vec3};
 use std::io::stdout;
 use std::rc::Rc;
 
+mod camera;
 mod color;
 mod hittable;
 mod random;
