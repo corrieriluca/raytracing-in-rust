@@ -8,6 +8,7 @@ pub struct Sphere {
 }
 
 impl Hittable for Sphere {
+    /// Tries to hit a sphere object.
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
         let oc = r.origin() - self.center;
         let a = r.direction().length_squared();

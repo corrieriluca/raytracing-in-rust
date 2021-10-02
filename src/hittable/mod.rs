@@ -1,3 +1,4 @@
+pub mod hittable_list;
 pub mod sphere;
 
 use crate::ray::Ray;
@@ -30,5 +31,8 @@ impl HitRecord {
 
 /// Object that can be hit
 pub trait Hittable {
+    /// Tries to hit an object on the given range of the ray.
+    /// Returns a record of the hit ([`HitRecord`]) in case of success.
+    /// Returns [`None`] in case of failure.
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord>;
 }
