@@ -9,6 +9,7 @@ use std::rc::Rc;
 
 mod color;
 mod hittable;
+mod random;
 mod ray;
 mod vec3;
 
