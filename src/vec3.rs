@@ -1,3 +1,4 @@
+use crate::random::*;
 use std::fmt::{Display, Formatter};
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
@@ -9,11 +10,11 @@ pub struct Vec3 {
     z: f64,
 }
 
-/// Alias of Vec3 representing a 3D-point
+/// Alias of [`Vec3`] representing a 3D-point
 pub type Point3 = Vec3;
 
 impl Vec3 {
-    /// Constructs a new vector with given x, y and z values
+    /// Constructs a new [`Vec3`] with given x, y and z values
     pub fn new(x: f64, y: f64, z: f64) -> Vec3 {
         Vec3 { x, y, z }
     }
@@ -25,6 +26,33 @@ impl Vec3 {
             y: 0.0,
             z: 0.0,
         }
+    }
+
+    /// Constructs a new [`Vec3`] with random coordinates in [0.0, 1.0[
+    pub fn random() -> Vec3 {
+        Vec3 {
+            x: canonical_random(),
+            y: canonical_random(),
+            z: canonical_random(),
+        }
+    }
+
+    /// Constructs a new [`Vec3`] with random coordinates in [`min`, `max`[
+    pub fn random_range(min: f64, max: f64) -> Vec3 {
+        Vec3 {
+            x: random_range(min, max),
+            y: random_range(min, max),
+            z: random_range(min, max),
+        }
+    }
+
+    /// Returns a random [`Vec3`] in the unit sphere (`-1.0..1.0`)
+    pub fn random_in_unit_sphere() -> Vec3 {
+        let mut p = Vec3::random_range(-1.0, 1.0);
+        while p.length_squared() >= 1.0 {
+            p = Vec3::random_range(-1.0, 1.0);
+        }
+        p
     }
 
     pub fn x(&self) -> f64 {
@@ -51,12 +79,12 @@ impl Vec3 {
         *self / self.length()
     }
 
-    /// Returns the dot product two vectors
+    /// Returns the dot product two [`Vec3`]
     pub fn dot(u: &Vec3, v: &Vec3) -> f64 {
         u.x * v.x + u.y * v.y + u.z * v.z
     }
 
-    /// Returns the cross product of two vectors
+    /// Returns the cross product of two [`Vec3`]
     pub fn cross(u: &Vec3, v: &Vec3) -> Vec3 {
         Vec3 {
             x: u.y * v.z - u.z * v.y,
