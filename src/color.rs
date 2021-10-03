@@ -8,9 +8,9 @@ impl Color {
     pub fn write(&self, stream: &mut impl Write, samples_per_pixel: i32) -> std::io::Result<()> {
         // Divide the color by the number of samples
         let scale = 1.0 / samples_per_pixel as f64;
-        let r = self.x() * scale;
-        let g = self.y() * scale;
-        let b = self.z() * scale;
+        let r = (self.x() * scale).sqrt();
+        let g = (self.y() * scale).sqrt();
+        let b = (self.z() * scale).sqrt();
 
         writeln!(
             stream,
