@@ -12,6 +12,7 @@ use std::rc::Rc;
 mod camera;
 mod color;
 mod hittable;
+mod material;
 mod random;
 mod ray;
 mod vec3;
