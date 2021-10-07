@@ -84,6 +84,12 @@ impl Vec3 {
         *self / self.length()
     }
 
+    /// Returns true if the vector is close to zero in all dimensions
+    pub fn near_zero(&self) -> bool {
+        let s = 1e-8;
+        self.x.abs() < s && self.y.abs() < s && self.z.abs() < s
+    }
+
     /// Returns the dot product two [`Vec3`]
     pub fn dot(u: &Vec3, v: &Vec3) -> f64 {
         u.x * v.x + u.y * v.y + u.z * v.z
@@ -198,6 +204,18 @@ mod test {
     #[test]
     fn length_works() {
         assert_eq!(6.0, Vec3::new(4.0, 4.0, 2.0).length());
+    }
+
+    #[test]
+    fn near_zero_should_return_true() {
+        let u = Vec3::new(1e-12, 1e-10, 1e-9);
+        assert!(u.near_zero());
+    }
+
+    #[test]
+    fn near_zero_should_return_false() {
+        let u = Vec3::new(1e-7, 1e-5, 1e-2);
+        assert!(!u.near_zero());
     }
 
     #[test]
