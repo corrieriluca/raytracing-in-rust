@@ -55,6 +55,11 @@ impl Vec3 {
         p
     }
 
+    /// Returns a random unit vector
+    pub fn random_unit_vector() -> Vec3 {
+        Vec3::random_in_unit_sphere().normalized()
+    }
+
     pub fn x(&self) -> f64 {
         self.x
     }

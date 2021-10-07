@@ -23,7 +23,7 @@ fn ray_color(r: Ray, world: &impl Hittable, depth: i32) -> Color {
     }
 
     if let Some(hit_record) = world.hit(&r, 0.001, f64::INFINITY) {
-        let target = hit_record.intersection + hit_record.normal + Vec3::random_in_unit_sphere();
+        let target = hit_record.intersection + hit_record.normal + Vec3::random_unit_vector();
         return 0.5
             * ray_color(
                 Ray::new(hit_record.intersection, target - hit_record.intersection),
