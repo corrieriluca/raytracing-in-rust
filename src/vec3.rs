@@ -103,6 +103,12 @@ impl Vec3 {
             z: u.x * v.y - u.y * v.x,
         }
     }
+
+    /// Returns the [`Vec3`] corresponding to the reflection
+    /// of `v` with the normal vector `n`
+    pub fn reflect(v: Vec3, n: Vec3) -> Vec3 {
+        v - 2.0 * Vec3::dot(&v, &n) * n
+    }
 }
 
 impl Display for Vec3 {

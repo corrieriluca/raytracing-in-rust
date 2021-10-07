@@ -3,9 +3,11 @@ use crate::color::Color;
 use crate::hittable::hittable_list::HittableList;
 use crate::hittable::sphere::Sphere;
 use crate::hittable::Hittable;
+use crate::material::lambertian::Lambertian;
+use crate::material::metal::Metal;
 use crate::random::canonical_random;
 use crate::ray::Ray;
-use crate::vec3::{Point3, Vec3};
+use crate::vec3::Point3;
 use std::io::stdout;
 use std::rc::Rc;
 
@@ -24,13 +26,10 @@ fn ray_color(r: Ray, world: &impl Hittable, depth: i32) -> Color {
     }
 
     if let Some(hit_record) = world.hit(&r, 0.001, f64::INFINITY) {
-        let target = hit_record.intersection + hit_record.normal + Vec3::random_unit_vector();
-        return 0.5
-            * ray_color(
-                Ray::new(hit_record.intersection, target - hit_record.intersection),
-                world,
-                depth - 1,
-            );
+        return match hit_record.material.scatter(&r, &hit_record) {
+            None => Color::new(0.0, 0.0, 0.0),
+            Some((scattered, attenuation)) => attenuation * ray_color(scattered, world, depth - 1),
+        };
     }
     let unit_direction = r.direction().normalized();
     let t = 0.5 * (unit_direction.y() + 1.0);
@@ -49,8 +48,32 @@ fn main() {
     // World
 
     let mut world = HittableList::new();
-    world.add(Rc::new(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5)));
-    world.add(Rc::new(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0)));
+
+    let material_ground = Rc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0)));
+    let material_center = Rc::new(Lambertian::new(Color::new(0.7, 0.3, 0.3)));
+    let material_left = Rc::new(Metal::new(Color::new(0.8, 0.8, 0.8)));
+    let material_right = Rc::new(Metal::new(Color::new(0.8, 0.6, 0.2)));
+
+    world.add(Rc::new(Sphere::new(
+        Point3::new(0.0, -100.5, -1.0),
+        100.0,
+        material_ground.clone(),
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point3::new(0.0, 0.0, -1.0),
+        0.5,
+        material_center.clone(),
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point3::new(-1.0, 0.0, -1.0),
+        0.5,
+        material_left.clone(),
+    )));
+    world.add(Rc::new(Sphere::new(
+        Point3::new(1.0, 0.0, -1.0),
+        0.5,
+        material_right.clone(),
+    )));
 
     // Camera
 

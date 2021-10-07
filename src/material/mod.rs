@@ -1,4 +1,5 @@
 pub mod lambertian;
+pub mod metal;
 
 use crate::color::Color;
 use crate::hittable::HitRecord;

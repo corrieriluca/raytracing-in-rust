@@ -15,7 +15,7 @@ impl Lambertian {
 }
 
 impl Material for Lambertian {
-    fn scatter(&self, ray_in: &Ray, record: &HitRecord) -> Option<(Ray, Color)> {
+    fn scatter(&self, _ray_in: &Ray, record: &HitRecord) -> Option<(Ray, Color)> {
         let mut scatter_direction = record.normal + Vec3::random_unit_vector();
 
         // Catch degenerate scatter direction
