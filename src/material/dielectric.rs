@@ -20,6 +20,7 @@ impl Dielectric {
 impl Material for Dielectric {
     fn scatter(&self, ray_in: &Ray, record: &HitRecord) -> Option<(Ray, Color)> {
         let attenuation = Color::new(1.0, 1.0, 1.0);
+
         let refraction_ratio = if record.front_face {
             1.0 / self.ir
         } else {
@@ -27,9 +28,18 @@ impl Material for Dielectric {
         };
 
         let unit_direction = ray_in.direction().normalized();
-        let refracted = Vec3::refract(unit_direction, record.normal, refraction_ratio);
+        let cos_theta = Vec3::dot(&(-unit_direction), &record.normal).min(1.0);
+        let sin_theta = (1.0 - cos_theta * cos_theta).sqrt();
 
-        let scattered = Ray::new(record.intersection, refracted);
+        let cannot_refract = refraction_ratio * sin_theta > 1.0;
+
+        let direction = if cannot_refract {
+            Vec3::reflect(unit_direction, record.normal)
+        } else {
+            Vec3::refract(unit_direction, record.normal, refraction_ratio)
+        };
+
+        let scattered = Ray::new(record.intersection, direction);
 
         Some((scattered, attenuation))
     }
