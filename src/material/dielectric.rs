@@ -1,6 +1,7 @@
 use crate::color::Color;
 use crate::hittable::HitRecord;
 use crate::material::Material;
+use crate::random::canonical_random;
 use crate::ray::Ray;
 use crate::vec3::Vec3;
 
@@ -14,6 +15,13 @@ impl Dielectric {
     /// index of refraction
     pub fn new(ir: f64) -> Dielectric {
         Dielectric { ir }
+    }
+
+    /// Use Schlick's approximation for reflectance
+    fn reflectance(cosine: f64, ref_idx: f64) -> f64 {
+        let r0 = (1.0 - ref_idx) / (1.0 + ref_idx);
+        let r0 = r0 * r0;
+        r0 + (1.0 - r0) * f64::powi(1.0 - cosine, 5)
     }
 }
 
@@ -33,7 +41,9 @@ impl Material for Dielectric {
 
         let cannot_refract = refraction_ratio * sin_theta > 1.0;
 
-        let direction = if cannot_refract {
+        let direction = if cannot_refract
+            || Dielectric::reflectance(cos_theta, refraction_ratio) > canonical_random()
+        {
             Vec3::reflect(unit_direction, record.normal)
         } else {
             Vec3::refract(unit_direction, record.normal, refraction_ratio)
