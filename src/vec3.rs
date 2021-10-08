@@ -105,9 +105,19 @@ impl Vec3 {
     }
 
     /// Returns the [`Vec3`] corresponding to the reflection
-    /// of `v` with the normal vector `n`
+    /// of `v` given `n` the normal vector
     pub fn reflect(v: Vec3, n: Vec3) -> Vec3 {
         v - 2.0 * Vec3::dot(&v, &n) * n
+    }
+
+    /// Return the [`Vec3`] corresponding to the refraction
+    /// of `v` given `n` the normal and `etai_over_etat` the ratio of
+    /// refractive indices
+    pub fn refract(v: Vec3, n: Vec3, etai_over_etat: f64) -> Vec3 {
+        let cos_theta = Vec3::dot(&(-v), &n).min(1.0);
+        let r_out_perp = etai_over_etat * (v + cos_theta * n);
+        let r_out_parallel = -(1.0 - r_out_perp.length_squared()).abs().sqrt() * n;
+        return r_out_perp + r_out_parallel;
     }
 }
 
