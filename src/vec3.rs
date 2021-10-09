@@ -55,6 +55,15 @@ impl Vec3 {
         p
     }
 
+    /// Returns a random [`Vec3`] with `x` and `y` pointing to an unit disk
+    pub fn random_in_unit_disk() -> Vec3 {
+        let mut p = Vec3::new(random_range(-1.0, 1.0), random_range(-1.0, 1.0), 0.0);
+        while p.length_squared() >= 1.0 {
+            p = Vec3::new(random_range(-1.0, 1.0), random_range(-1.0, 1.0), 0.0);
+        }
+        p
+    }
+
     /// Returns a random unit vector
     pub fn random_unit_vector() -> Vec3 {
         Vec3::random_in_unit_sphere().normalized()
