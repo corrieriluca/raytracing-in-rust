@@ -126,7 +126,7 @@ impl Vec3 {
         let cos_theta = Vec3::dot(&(-v), &n).min(1.0);
         let r_out_perp = etai_over_etat * (v + cos_theta * n);
         let r_out_parallel = -(1.0 - r_out_perp.length_squared()).abs().sqrt() * n;
-        return r_out_perp + r_out_parallel;
+        r_out_perp + r_out_parallel
     }
 }
 
