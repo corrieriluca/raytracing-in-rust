@@ -10,9 +10,12 @@ pub struct Camera {
 
 impl Camera {
     /// Constructs a new camera with given aspect ratio.
-    pub fn new(aspect_ratio: f64) -> Camera {
-        let viewport_height = 2.0;
+    pub fn new(vertical_fov: f64, aspect_ratio: f64) -> Camera {
+        let theta = vertical_fov.to_radians();
+        let h = (theta / 2.0).tan();
+        let viewport_height = 2.0 * h;
         let viewport_width = aspect_ratio * viewport_height;
+
         let focal_length = 1.0;
 
         let origin = Point3::new(0.0, 0.0, 0.0);
