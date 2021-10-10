@@ -1,6 +1,7 @@
 use crate::ray::Ray;
 use crate::vec3::{Point3, Vec3};
 
+#[allow(dead_code)]
 pub struct Camera {
     origin: Point3,
     lower_left_corner: Point3,
