@@ -120,6 +120,4 @@ fn main() {
         .flipv()
         .save_with_format(Path::new("./image.bmp"), ::image::ImageFormat::Bmp)
         .expect("An error occurred while writing the image to the file.");
-
-    eprintln!("\nDone!");
 }

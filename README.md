@@ -7,7 +7,7 @@ To-do:
 - [x] _Ray Tracing in One Weekend_ (actually in more than one weekend...)
 - [x] Refactor the code
 - [ ] Command line arguments
-- [ ] Progress bar
+- [x] Progress bar
 - [ ] Parallelism (multithreading)
 - [x] Save to a better image format (BMP)
 

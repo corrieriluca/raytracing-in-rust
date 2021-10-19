@@ -7,6 +7,7 @@ use crate::ray::Ray;
 use crate::vec3::Vec3;
 
 use image::DynamicImage;
+use pbr::ProgressBar;
 
 /// Represent an image to be rendered
 pub struct Image {
@@ -75,9 +76,10 @@ impl Image {
     /// (may be a file or just standard output)
     pub fn render_image(&self, samples_per_pixel: i32, max_depth: i32) -> DynamicImage {
         let mut img = DynamicImage::new_rgb8(self.image_width, self.image_height);
+        let mut pb = ProgressBar::new(self.image_height as u64);
 
         for j in (0..self.image_height).rev() {
-            eprint!("\rLines remaining: {} ", j);
+            pb.inc();
             for i in 0..self.image_width {
                 let mut pixel_color = Color::new(0.0, 0.0, 0.0);
                 for _ in 0..samples_per_pixel {
@@ -89,6 +91,8 @@ impl Image {
                 pixel_color.write(img.as_mut_rgb8().unwrap(), i, j, samples_per_pixel);
             }
         }
+
+        pb.finish_print("Done!");
 
         img
     }
