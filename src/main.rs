@@ -8,7 +8,7 @@ use crate::material::metal::Metal;
 use crate::random::{canonical_random, random_range};
 use crate::vec3::{Point3, Vec3};
 
-use std::io::stdout;
+use std::path::Path;
 use std::rc::Rc;
 
 mod camera;
@@ -116,8 +116,10 @@ fn main() {
     let max_depth = 50;
 
     image
-        .render_image(&mut stdout(), samples_per_pixel, max_depth)
-        .expect("An error occurred while writing to standard output");
+        .render_image(samples_per_pixel, max_depth)
+        .flipv()
+        .save_with_format(Path::new("./image.bmp"), ::image::ImageFormat::Bmp)
+        .expect("An error occurred while writing the image to the file.");
 
     eprintln!("\nDone!");
 }

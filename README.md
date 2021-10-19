@@ -5,13 +5,16 @@ Simple path tracer made in Rust based on Peter Shirley's book
 
 To-do:
 - [x] _Ray Tracing in One Weekend_ (actually in more than one weekend...)
-- [ ] Refactor the code
+- [x] Refactor the code
 - [ ] Command line arguments
 - [ ] Progress bar
 - [ ] Parallelism (multithreading)
+- [x] Save to a better image format (BMP)
 
 ## Usage
 
 ```shell
-$ cargo run --release > image.ppm
+$ cargo run --release
 ```
+
+The resulting image is in `./image.bmp`.

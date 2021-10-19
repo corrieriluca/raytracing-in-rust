@@ -5,12 +5,13 @@ use crate::hittable::Hittable;
 use crate::random::canonical_random;
 use crate::ray::Ray;
 use crate::vec3::Vec3;
-use std::io::Write;
+
+use image::DynamicImage;
 
 /// Represent an image to be rendered
 pub struct Image {
-    image_width: i32,
-    image_height: i32,
+    image_width: u32,
+    image_height: u32,
     world: HittableList,
     camera: Camera,
 }
@@ -20,7 +21,7 @@ impl Image {
     /// with its camera
     pub fn new(
         aspect_ratio: f64,
-        image_width: i32,
+        image_width: u32,
         world: HittableList,
         lookfrom: Vec3,
         lookat: Vec3,
@@ -29,7 +30,7 @@ impl Image {
         aperture: f64,
         vertical_fov: f64,
     ) -> Image {
-        let image_height = (image_width as f64 / aspect_ratio) as i32;
+        let image_height = (image_width as f64 / aspect_ratio) as u32;
         let camera = Camera::new(
             lookfrom,
             lookat,
@@ -72,17 +73,8 @@ impl Image {
 
     /// Renders the image to the PPM format to the specified stream
     /// (may be a file or just standard output)
-    pub fn render_image(
-        &self,
-        stream: &mut impl Write,
-        samples_per_pixel: i32,
-        max_depth: i32,
-    ) -> std::io::Result<()> {
-        write!(
-            stream,
-            "P3\n{} {}\n255\n",
-            self.image_width, self.image_height
-        )?;
+    pub fn render_image(&self, samples_per_pixel: i32, max_depth: i32) -> DynamicImage {
+        let mut img = DynamicImage::new_rgb8(self.image_width, self.image_height);
 
         for j in (0..self.image_height).rev() {
             eprint!("\rLines remaining: {} ", j);
@@ -94,10 +86,10 @@ impl Image {
                     let r = self.camera.get_ray(u, v);
                     pixel_color += self.ray_color(r, max_depth);
                 }
-                pixel_color.write(stream, samples_per_pixel)?
+                pixel_color.write(img.as_mut_rgb8().unwrap(), i, j, samples_per_pixel);
             }
         }
 
-        Ok(())
+        img
     }
 }
