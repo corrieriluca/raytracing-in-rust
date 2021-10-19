@@ -8,8 +8,10 @@ use crate::material::metal::Metal;
 use crate::random::{canonical_random, random_range};
 use crate::vec3::{Point3, Vec3};
 
-use std::path::Path;
+use std::path::PathBuf;
 use std::rc::Rc;
+
+use structopt::StructOpt;
 
 mod camera;
 mod color;
@@ -19,6 +21,23 @@ mod material;
 mod random;
 mod ray;
 mod vec3;
+
+#[derive(StructOpt)]
+#[structopt(name = "Raytracing in Rust")]
+#[allow(dead_code)]
+struct Opt {
+    #[structopt(short, long, help = "Use multithreading for rendering.")]
+    parallel: bool,
+
+    #[structopt(
+        short = "j",
+        help = "Number of threads to spawn. Default is number of logical cores."
+    )]
+    thread_number: Option<u32>,
+
+    #[structopt(parse(from_os_str), help = "Where to save the result (BMP file).")]
+    output: PathBuf,
+}
 
 /// Generate a scene with random small spheres and three big spheres
 fn random_scene() -> HittableList {
@@ -86,6 +105,8 @@ fn random_scene() -> HittableList {
 }
 
 fn main() {
+    let opt = Opt::from_args();
+
     // Image
     let aspect_ratio = 3.0 / 2.0;
     let image_width = 500; // 1200
@@ -118,6 +139,6 @@ fn main() {
     image
         .render_image(samples_per_pixel, max_depth)
         .flipv()
-        .save_with_format(Path::new("./image.bmp"), ::image::ImageFormat::Bmp)
+        .save_with_format(opt.output, ::image::ImageFormat::Bmp)
         .expect("An error occurred while writing the image to the file.");
 }
