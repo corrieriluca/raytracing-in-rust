@@ -8,7 +8,7 @@ To-do:
 - [x] Refactor the code
 - [x] Command line arguments
 - [x] Progress bar
-- [ ] Parallelism (multithreading)
+- [ ] Parallelism (multithreading) - *WIP*
 - [x] Save to a better image format (BMP)
 
 ## Usage
@@ -22,13 +22,14 @@ USAGE:
     raytracing_in_rust [FLAGS] [OPTIONS] <output>
 
 FLAGS:
+    -d, --debug       Print debug information
     -h, --help        Prints help information
-    -p, --parallel    Use multithreading for rendering.
+    -p, --parallel    Use multithreading for rendering
     -V, --version     Prints version information
 
 OPTIONS:
-    -j <thread-number>        Number of threads to spawn. Default is number of logical cores.
+    -j <thread-number>        Number of threads to spawn. Default is number of logical cores
 
 ARGS:
-    <output>    Where to save the result (BMP file).
+    <output>    Where to save the result (BMP file)
 ```
