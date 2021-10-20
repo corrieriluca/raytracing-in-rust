@@ -8,8 +8,9 @@ To-do:
 - [x] Refactor the code
 - [x] Command line arguments
 - [x] Progress bar
-- [ ] Parallelism (multithreading) - *WIP*
+- [x] Parallelism (multithreading)
 - [x] Save to a better image format (BMP)
+- [ ] Load .obj files
 
 ## Usage
 
