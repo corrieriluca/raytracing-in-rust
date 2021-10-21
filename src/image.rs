@@ -6,7 +6,6 @@ use crate::hittable::Hittable;
 use crate::parallel::ThreadPool;
 use crate::random::canonical_random;
 use crate::ray::Ray;
-use crate::vec3::Vec3;
 
 use image::DynamicImage;
 use pbr::ProgressBar;
@@ -26,23 +25,9 @@ impl Image {
         aspect_ratio: f64,
         image_width: u32,
         world: Arc<dyn Hittable + Sync + Send>,
-        lookfrom: Vec3,
-        lookat: Vec3,
-        vup: Vec3,
-        focus_dist: f64,
-        aperture: f64,
-        vertical_fov: f64,
+        camera: Arc<Camera>,
     ) -> Image {
         let image_height = (image_width as f64 / aspect_ratio) as u32;
-        let camera = Arc::new(Camera::new(
-            lookfrom,
-            lookat,
-            vup,
-            vertical_fov,
-            aspect_ratio,
-            aperture,
-            focus_dist,
-        ));
 
         Image {
             image_width,

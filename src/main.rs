@@ -12,6 +12,7 @@ use crate::vec3::{Point3, Vec3};
 use std::path::PathBuf;
 use std::sync::Arc;
 
+use camera::Camera;
 use structopt::StructOpt;
 
 mod camera;
@@ -140,16 +141,21 @@ fn main() {
 
     let world = random_scene();
 
+    let camera = Arc::new(Camera::new(
+        lookfrom,
+        lookat,
+        vup,
+        vertical_fov,
+        aspect_ratio,
+        aperture,
+        focus_dist,
+    ));
+
     let image = Image::new(
         aspect_ratio,
         image_width,
         Arc::clone(&world),
-        lookfrom,
-        lookat,
-        vup,
-        focus_dist,
-        aperture,
-        vertical_fov,
+        Arc::clone(&camera),
     );
 
     // Rendering
