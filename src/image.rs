@@ -1,4 +1,3 @@
-use std::sync::mpsc::channel;
 use std::sync::{Arc, Mutex};
 
 use crate::camera::Camera;
@@ -18,13 +17,6 @@ pub struct Image {
     image_height: u32,
     world: Arc<dyn Hittable + Sync + Send>,
     camera: Arc<Camera>,
-}
-
-/// Represent a Pixel to be rendered on the resulting image
-struct Pixel {
-    x: u32,
-    y: u32,
-    color: Color,
 }
 
 impl Image {
@@ -92,56 +84,40 @@ impl Image {
     ) -> DynamicImage {
         let mut pool = ThreadPool::new(thread_number);
 
-        let mut img = DynamicImage::new_rgb8(self.image_width, self.image_height);
-
+        let img = Arc::new(Mutex::new(DynamicImage::new_rgb8(
+            self.image_width,
+            self.image_height,
+        )));
         let pb = Arc::new(Mutex::new(ProgressBar::new(self.image_height as u64)));
 
-        // Split the image into chunks (one chunk per thread in the pool)
-
-        let lines: Vec<u32> = (0..self.image_height).rev().collect();
-        let mut chunks = Vec::new();
-        for chunk in lines.chunks(self.image_height as usize / thread_number) {
-            chunks.push(chunk.to_owned());
-        }
-        let chunk_number = chunks.len();
-
-        // Render all the chunks in its own thread
-
-        let (sender, receiver) = channel();
-
-        for chunk in chunks {
+        for j in (0..self.image_height).rev() {
             let pb = Arc::clone(&pb);
             let world = Arc::clone(&self.world);
+            let img = Arc::clone(&img);
             let camera = Arc::clone(&self.camera);
 
             let image_width = self.image_width;
             let image_height = self.image_height;
 
-            let sender = sender.clone();
-
+            // Each line rendering is sent to the thread pool
             pool.execute(move || {
-                let mut colors = Vec::with_capacity(chunk.len() * image_width as usize);
-                for j in chunk {
-                    for i in 0..image_width {
-                        let mut pixel_color = Color::new(0.0, 0.0, 0.0);
-                        for _ in 0..samples_per_pixel {
-                            let u = (i as f64 + canonical_random()) / (image_width - 1) as f64;
-                            let v = (j as f64 + canonical_random()) / (image_height - 1) as f64;
-                            let r = camera.get_ray(u, v);
-                            pixel_color += Image::ray_color(Arc::clone(&world), r, max_depth);
-                        }
-
-                        colors.push(Pixel {
-                            x: i,
-                            y: j,
-                            color: pixel_color,
-                        });
+                for i in 0..image_width {
+                    let mut pixel_color = Color::new(0.0, 0.0, 0.0);
+                    for _ in 0..samples_per_pixel {
+                        let u = (i as f64 + canonical_random()) / (image_width - 1) as f64;
+                        let v = (j as f64 + canonical_random()) / (image_height - 1) as f64;
+                        let r = camera.get_ray(u, v);
+                        pixel_color += Image::ray_color(Arc::clone(&world), r, max_depth);
                     }
-
-                    pb.lock().unwrap().inc();
+                    pixel_color.write(
+                        img.lock().unwrap().as_mut_rgb8().unwrap(),
+                        i,
+                        j,
+                        samples_per_pixel,
+                    )
                 }
 
-                sender.send(colors).expect("Cannot send colors from thread");
+                pb.lock().unwrap().inc();
             });
         }
 
@@ -149,19 +125,7 @@ impl Image {
 
         pb.lock().unwrap().finish_print("Done!");
 
-        // Collect all the pixels from the threads and put them on the image
-
-        let pixels = receiver
-            .iter()
-            .take(chunk_number)
-            .flatten()
-            .collect::<Vec<Pixel>>();
-
-        for p in pixels {
-            p.color
-                .write(img.as_mut_rgb8().unwrap(), p.x, p.y, samples_per_pixel);
-        }
-
+        let img = img.lock().unwrap().clone();
         img
     }
 }
