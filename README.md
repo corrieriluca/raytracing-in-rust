@@ -14,6 +14,11 @@ To-do:
 
 ## Usage
 
+As stated in the `./.cargo/config.toml` file, this package use the `rustc` flag
+`-Ctarget-cpu=native` (which can be seen as equivalent to `gcc`/`clang`'s `-march=native` flag).
+Thus for better performance, the produced binary should be run on the same machine
+on which it has been compiled.
+
 ```
 $ cargo build --release
 $ ./target/release/raytracing_in_rust --help
